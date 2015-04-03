@@ -1,5 +1,4 @@
 // [[Rcpp::depends(BH)]]
-#include <vector>
 #include <Rcpp.h>
 #include "types.h"
 
