@@ -5,16 +5,14 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-int share_int(const char* seg_name, const char* obj_name) {
+int share_int(const std::vector<int>& vec, const char* seg_name, const char* obj_name) {
   using namespace boost::interprocess;
 
   managed_shared_memory segment(create_only,
-    seg_name, 5 * sizeof(int) + 65536);
+    seg_name, vec.size() * sizeof(int) + 65536);
 
-  int* initVal = new int[5] {1,2,3,4,5};
-
-  const int *x_begin = initVal;
-  const int *y_end = initVal + 5;
+  const int *x_begin = &vec.front();
+  const int *y_end = x_begin + vec.size();
 
   const ShmemAllocator alloc_inst (segment.get_segment_manager());
 

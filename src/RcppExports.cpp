@@ -18,14 +18,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // share_int
-int share_int(const char* seg_name, const char* obj_name);
-RcppExport SEXP sharedata_share_int(SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
+int share_int(const std::vector<int>& vec, const char* seg_name, const char* obj_name);
+RcppExport SEXP sharedata_share_int(SEXP vecSEXP, SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const char* >::type seg_name(seg_nameSEXP);
     Rcpp::traits::input_parameter< const char* >::type obj_name(obj_nameSEXP);
-    __result = Rcpp::wrap(share_int(seg_name, obj_name));
+    __result = Rcpp::wrap(share_int(vec, seg_name, obj_name));
     return __result;
 END_RCPP
 }

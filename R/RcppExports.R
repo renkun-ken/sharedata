@@ -5,7 +5,7 @@ get_shared_int <- function(seg_name, obj_name) {
     .Call('sharedata_get_shared_int', PACKAGE = 'sharedata', seg_name, obj_name)
 }
 
-share_int <- function(seg_name, obj_name) {
-    .Call('sharedata_share_int', PACKAGE = 'sharedata', seg_name, obj_name)
+share_int <- function(vec, seg_name, obj_name) {
+    .Call('sharedata_share_int', PACKAGE = 'sharedata', vec, seg_name, obj_name)
 }
 

@@ -9,5 +9,5 @@ getSharedVector <- function(segment, name) {
 
 #' @export
 shareVector <- function(x, segment, name) {
-  share_int(segment, name)
+  share_int(x, segment, name)
 }
