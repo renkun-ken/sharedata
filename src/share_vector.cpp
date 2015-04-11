@@ -8,8 +8,10 @@ using namespace Rcpp;
 int share_int(const std::vector<int>& vec, const char* seg_name, const char* obj_name) {
   using namespace boost::interprocess;
 
+  shared_memory_object::remove(seg_name);
+
   managed_shared_memory segment(create_only,
-    seg_name, vec.size() * sizeof(int) + 65536);
+    seg_name, vec.size() * sizeof(int) + 1024);
 
   const int *x_begin = &vec.front();
   const int *y_end = x_begin + vec.size();
