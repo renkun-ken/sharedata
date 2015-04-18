@@ -1,7 +1,7 @@
 Package: sharedata
 Title: Interprocess Data Sharing Between R Sessions
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", , "ken@renkun.me", role = c("aut", "cre"))
+Version: 0.0.0.9001
+Authors@R: person("Kun", "Ren", , "ken@renkun.me", role = c("aut", "cre"))
 Description: Share data between R sessions
 Depends: R (>= 3.1.0)
 License: MIT + file license

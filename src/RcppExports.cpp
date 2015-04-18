@@ -5,28 +5,53 @@
 
 using namespace Rcpp;
 
-// get_shared_int
-IntegerVector get_shared_int(const char* seg_name, const char* obj_name);
-RcppExport SEXP sharedata_get_shared_int(SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
+// get_shared_integer_vector
+IntegerVector get_shared_integer_vector(const char* seg_name, const char* obj_name);
+RcppExport SEXP sharedata_get_shared_integer_vector(SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const char* >::type seg_name(seg_nameSEXP);
     Rcpp::traits::input_parameter< const char* >::type obj_name(obj_nameSEXP);
-    __result = Rcpp::wrap(get_shared_int(seg_name, obj_name));
+    __result = Rcpp::wrap(get_shared_integer_vector(seg_name, obj_name));
     return __result;
 END_RCPP
 }
-// share_int
-int share_int(const std::vector<int>& vec, const char* seg_name, const char* obj_name);
-RcppExport SEXP sharedata_share_int(SEXP vecSEXP, SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
+// get_shared_numeric_vector
+NumericVector get_shared_numeric_vector(const char* seg_name, const char* obj_name);
+RcppExport SEXP sharedata_get_shared_numeric_vector(SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const char* >::type seg_name(seg_nameSEXP);
+    Rcpp::traits::input_parameter< const char* >::type obj_name(obj_nameSEXP);
+    __result = Rcpp::wrap(get_shared_numeric_vector(seg_name, obj_name));
+    return __result;
+END_RCPP
+}
+// share_integer_vector
+int share_integer_vector(const std::vector<int>& vec, const char* seg_name, const char* obj_name);
+RcppExport SEXP sharedata_share_integer_vector(SEXP vecSEXP, SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const std::vector<int>& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const char* >::type seg_name(seg_nameSEXP);
     Rcpp::traits::input_parameter< const char* >::type obj_name(obj_nameSEXP);
-    __result = Rcpp::wrap(share_int(vec, seg_name, obj_name));
+    __result = Rcpp::wrap(share_integer_vector(vec, seg_name, obj_name));
+    return __result;
+END_RCPP
+}
+// share_numeric_vector
+int share_numeric_vector(const std::vector<double>& vec, const char* seg_name, const char* obj_name);
+RcppExport SEXP sharedata_share_numeric_vector(SEXP vecSEXP, SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const char* >::type seg_name(seg_nameSEXP);
+    Rcpp::traits::input_parameter< const char* >::type obj_name(obj_nameSEXP);
+    __result = Rcpp::wrap(share_numeric_vector(vec, seg_name, obj_name));
     return __result;
 END_RCPP
 }
