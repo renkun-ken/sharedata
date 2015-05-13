@@ -3,20 +3,28 @@
 NULL
 
 #' @export
-getSharedVector <- function(segment, name, mode) {
-  do.call(sprintf("get_shared_%s_vector", mode), list(segment, name))
+get_object <- function(name) {
+  stopifnot(is.character(name))
+  raw_data <- get_shared_raw(name, "raw")
+  conn <- rawConnection(raw_data, "r")
+  obj <- unserialize(conn)
+  close(conn)
+  obj
 }
 
 #' @export
-shareVector <- function(x, segment, name)
-  UseMethod("shareVector")
-
-#' @export
-shareVector.integer <- function(x, segment, name) {
-  share_integer_vector(x, segment, name)
+share_object <- function(x, name, overwrite = TRUE) {
+  stopifnot(is.character(name), is.logical(overwrite))
+  conn <- rawConnection(raw(0L), "w")
+  serialize(x, conn)
+  seek(conn, 0L)
+  res <- share_raw(rawConnectionValue(conn), name, "raw", overwrite)
+  close(conn)
+  res == 0L
 }
 
 #' @export
-shareVector.numeric <- function(x, segment, name) {
-  share_numeric_vector(x, segment, name)
+remove_object <- function(name) {
+  stopifnot(is.character(name))
+  remove_raw(name) == 0L
 }

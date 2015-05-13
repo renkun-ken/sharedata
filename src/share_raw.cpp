@@ -4,14 +4,19 @@
 
 using namespace Rcpp;
 
+size_t EXTRA_BUFFER_SIZE = 1024;
+
 template <typename T>
-int share_vector(const std::vector<T>& vec, const char* seg_name, const char* obj_name) {
+int share_vector(const std::vector<T>& vec, const char* seg_name, const char* obj_name,
+  const bool& overwrite) {
   using namespace boost::interprocess;
 
-  shared_memory_object::remove(seg_name);
+  if (overwrite) {
+    shared_memory_object::remove(seg_name);
+  }
 
   managed_shared_memory segment(create_only,
-    seg_name, vec.size() * sizeof(T) + 1024);
+    seg_name, vec.size() * sizeof(T) + EXTRA_BUFFER_SIZE);
 
   const T *x_begin = &vec.front();
   const T *y_end = x_begin + vec.size();
@@ -21,8 +26,7 @@ int share_vector(const std::vector<T>& vec, const char* seg_name, const char* ob
 
   const ShmemAllocator alloc_inst (segment.get_segment_manager());
 
-  SharedVector *sv =
-    segment.construct<SharedVector>
+  segment.construct<SharedVector>
     (obj_name)/*object name*/
     (x_begin     /*first ctor parameter*/,
       y_end     /*second ctor parameter*/,
@@ -32,11 +36,7 @@ int share_vector(const std::vector<T>& vec, const char* seg_name, const char* ob
 }
 
 // [[Rcpp::export]]
-int share_integer_vector(const std::vector<int>& vec, const char* seg_name, const char* obj_name) {
-  return share_vector<int>(vec, seg_name, obj_name);
-}
-
-// [[Rcpp::export]]
-int share_numeric_vector(const std::vector<double>& vec, const char* seg_name, const char* obj_name) {
-  return share_vector<double>(vec, seg_name, obj_name);
+int share_raw(const std::vector<Rbyte>& vec,
+  const char* seg_name, const char* obj_name, const bool& overwrite) {
+  return share_vector<Rbyte>(vec, seg_name, obj_name, overwrite);
 }

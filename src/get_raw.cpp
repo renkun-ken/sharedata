@@ -21,11 +21,6 @@ T_OUT get_shared_vector(const char* seg_name, const char* obj_name) {
 }
 
 // [[Rcpp::export]]
-IntegerVector get_shared_integer_vector(const char* seg_name, const char* obj_name) {
-  return get_shared_vector<int, IntegerVector>(seg_name, obj_name);
-}
-
-// [[Rcpp::export]]
-NumericVector get_shared_numeric_vector(const char* seg_name, const char* obj_name) {
-  return get_shared_vector<double, NumericVector>(seg_name, obj_name);
+RawVector get_shared_raw(const char* seg_name, const char* obj_name) {
+  return get_shared_vector<Rbyte, RawVector>(seg_name, obj_name);
 }
