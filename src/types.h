@@ -16,6 +16,4 @@ struct SHARED_VECTOR_TYPE {
   typedef boost::interprocess::vector<T, SHARED_VECTOR_TYPE<T>::ShmemAllocator> SharedVector;
 };
 
-typedef SHARED_VECTOR_TYPE<Rbyte> SHARED_RAW;
-
 #endif
