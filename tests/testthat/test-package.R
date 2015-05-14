@@ -7,9 +7,9 @@ test_that("share_object", {
 })
 
 test_that("get_object", {
-  expect_identical(get_object("data1"), 1:10)
-  expect_identical(get_object("data2"), letters)
-  expect_identical(get_object("data3"), mtcars)
+  expect_identical(clone_object("data1"), 1:10)
+  expect_identical(clone_object("data2"), letters)
+  expect_identical(clone_object("data3"), mtcars)
 })
 
 test_that("remove_object", {

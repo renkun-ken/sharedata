@@ -2,14 +2,14 @@
 #' @importFrom Rcpp sourceCpp
 NULL
 
-#' Copy object from shared memory
+#' Clone an object from shared memory
 #' @param name character. The name of the object.
 #' @export
 #' @examples
 #' \dontrun{
-#' get_object("shared_numbers")
+#' clone_object("shared_numbers")
 #' }
-get_object <- function(name) {
+clone_object <- function(name) {
   stopifnot(is.character(name))
   raw_data <- get_shared_raw(name, "raw")
   conn <- rawConnection(raw_data, "r")
@@ -18,7 +18,24 @@ get_object <- function(name) {
   obj
 }
 
-#' Copy object to shared memory
+#' @export
+clone_objects <- function(..., envir = parent.frame()) {
+  args <- list(...)
+  if (is.null(obj_names <- names(args)) || !all(nzchar(obj_names))) {
+    stop("All arguments must be named")
+  }
+  .mapply(function(var, name) {
+    assign(var, clone_object(name), envir = envir)
+  }, list(obj_names, args), NULL)
+  invisible(NULL)
+}
+
+#' @export
+clone_environment <- function(name, envir = parent.frame()) {
+  invisible(list2env(clone_object(name), envir))
+}
+
+#' Share an object to shared memory
 #' @param x an object.
 #' @param name character. The name of the object.
 #' @param overwrite logical to indicate whether to overwrite
@@ -39,6 +56,22 @@ share_object <- function(x, name, overwrite = TRUE) {
   res == 0L
 }
 
+#' @export
+share_objects <- function(...) {
+  args <- list(...)
+  if (is.null(obj_names <- names(args)) || !all(nzchar(obj_names))) {
+    stop("All arguments must be named")
+  }
+  res <- .mapply(share_object, list(args, obj_names), NULL)
+  invisible(vapply(res, identical, logical(1L), 0L))
+}
+
+#' @export
+share_environment <- function(name, envir = parent.frame(),
+  all.names = FALSE, overwrite = TRUE) {
+  share_object(as.list.environment(envir, all.names = all.names), name, overwrite)
+}
+
 #' Remove object from shared memory
 #' @param name character. The name of the object.
 #' @export
@@ -48,5 +81,5 @@ share_object <- function(x, name, overwrite = TRUE) {
 #' }
 remove_object <- function(name) {
   stopifnot(is.character(name))
-  remove_raw(name) == 0L
+  invisible(vapply(name, remove_raw, integer(1L)) == 0L)
 }

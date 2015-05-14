@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{share_object}
 \alias{share_object}
-\title{Copy object to shared memory}
+\title{Share an object to shared memory}
 \usage{
 share_object(x, name, overwrite = TRUE)
 }
@@ -15,7 +15,7 @@ share_object(x, name, overwrite = TRUE)
 existing memory with the same name.}
 }
 \description{
-Copy object to shared memory
+Share an object to shared memory
 }
 \examples{
 \dontrun{
