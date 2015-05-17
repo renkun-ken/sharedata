@@ -18,18 +18,28 @@ clone_object <- function(name) {
   obj
 }
 
+#' Clone objects from shared memory to an environment
+#' @param ... character values indicating names of objects
+#' in shared memory.
+#' @param envir an environment to which the cloned objects
+#' are exported.
 #' @export
 clone_objects <- function(..., envir = parent.frame()) {
-  args <- list(...)
-  if (is.null(obj_names <- names(args)) || !all(nzchar(obj_names))) {
-    stop("All arguments must be named")
-  }
+  args <- vapply(list(...), identity, character(1L))
+  arg_names <- names(args)
+  if (is.null(arg_names)) arg_names <- unname(args)
+  empty_names_selector <- !nzchar(arg_names)
+  arg_names[empty_names_selector] <- args[empty_names_selector]
   .mapply(function(var, name) {
     assign(var, clone_object(name), envir = envir)
-  }, list(obj_names, args), NULL)
-  invisible(NULL)
+  }, list(arg_names, args), NULL)
+  invisible(envir)
 }
 
+#' Clone objects in a shared environment
+#' @param name character. name of the shared environment.
+#' @param envir an environment to which the objects in the
+#' shared environment are exported.
 #' @export
 clone_environment <- function(name, envir = parent.frame()) {
   invisible(list2env(clone_object(name), envir))
@@ -38,7 +48,7 @@ clone_environment <- function(name, envir = parent.frame()) {
 #' Share an object to shared memory
 #' @param x an object.
 #' @param name character. The name of the object.
-#' @param overwrite logical to indicate whether to overwrite
+#' @param overwrite a logical to indicate whether to overwrite
 #' existing memory with the same name.
 #' @export
 #' @examples
@@ -51,21 +61,38 @@ share_object <- function(x, name, overwrite = TRUE) {
   conn <- rawConnection(raw(0L), "w")
   serialize(x, conn)
   seek(conn, 0L)
-  res <- share_raw(rawConnectionValue(conn), name, "raw", overwrite)
+  share_raw(rawConnectionValue(conn), name, "raw", overwrite)
   close(conn)
-  res == 0L
+  invisible()
 }
 
+#' Share objects to shared memory
+#' @param ... objects to share. Unnamed arguments must be given as
+#'  a symbol rather than an expression.
 #' @export
 share_objects <- function(...) {
-  args <- list(...)
-  if (is.null(obj_names <- names(args)) || !all(nzchar(obj_names))) {
-    stop("All arguments must be named")
-  }
-  res <- .mapply(share_object, list(args, obj_names), NULL)
-  invisible(vapply(res, identical, logical(1L), 0L))
+  args <- match.call(expand.dots = FALSE)$...
+  objs <- list(...)
+  arg_names <- names(objs)
+  if (is.null(arg_names)) arg_names <- character(length(objs))
+  empty_names_selector <- !nzchar(arg_names)
+  arg_names[empty_names_selector] <- vapply(args[empty_names_selector],
+    function(arg) {
+      if (is.symbol(arg)) as.character(arg)
+      else stop("Unnamed argument must be a symbol rather than an expression", call. = FALSE)
+    }, character(1L))
+  res <- .mapply(share_object, list(objs, arg_names), NULL)
+  invisible()
 }
 
+#' Share the objects of an environment to shared memory
+#' @param name character. the name of the shared memory object.
+#' @param envir an environment to share. In default, the calling environment
+#' will be shared.
+#' @param all.names a logical indicating whether to share all values or
+#' (default) those whose names do not begin with a dot.
+#' @param overwrite a logical to indicate whether to overwrite
+#' existing memory with the same name.
 #' @export
 share_environment <- function(name, envir = parent.frame(),
   all.names = FALSE, overwrite = TRUE) {
@@ -81,5 +108,6 @@ share_environment <- function(name, envir = parent.frame(),
 #' }
 remove_object <- function(name) {
   stopifnot(is.character(name))
-  invisible(vapply(name, remove_raw, integer(1L)) == 0L)
+  vapply(name, remove_raw, integer(1L))
+  invisible()
 }

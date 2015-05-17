@@ -1,9 +1,9 @@
 context("sharedata")
 
 test_that("share_object", {
-  expect_equal(share_object(1:10, "data1"), TRUE)
-  expect_equal(share_object(letters, "data2"), TRUE)
-  expect_equal(share_object(mtcars, "data3"), TRUE)
+  share_object(1:10, "data1")
+  share_object(letters, "data2")
+  share_object(mtcars, "data3")
 })
 
 test_that("get_object", {
@@ -13,7 +13,7 @@ test_that("get_object", {
 })
 
 test_that("remove_object", {
-  expect_equal(remove_object("data1"), TRUE)
-  expect_equal(remove_object("data2"), TRUE)
-  expect_equal(remove_object("data3"), TRUE)
+  remove_object("data1")
+  remove_object("data2")
+  remove_object("data3")
 })

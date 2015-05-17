@@ -11,7 +11,7 @@ share_object(x, name, overwrite = TRUE)
 
 \item{name}{character. The name of the object.}
 
-\item{overwrite}{logical to indicate whether to overwrite
+\item{overwrite}{a logical to indicate whether to overwrite
 existing memory with the same name.}
 }
 \description{
