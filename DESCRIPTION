@@ -1,6 +1,6 @@
 Package: sharedata
 Title: Interprocess Data Sharing Between R Sessions
-Version: 0.0.1.1
+Version: 0.0.2
 Authors@R: person("Kun", "Ren", , "ken@renkun.me", role = c("aut", "cre"))
 Description: A simple toolbox to share data between R sessions without having to
     explicitly save data to a physical location. Any serializable R object can be
