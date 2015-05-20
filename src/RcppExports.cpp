@@ -5,26 +5,37 @@
 
 using namespace Rcpp;
 
-// get_shared_raw
-RawVector get_shared_raw(const char* seg_name, const char* obj_name);
-RcppExport SEXP sharedata_get_shared_raw(SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
+// clone_shared_raw
+RawVector clone_shared_raw(const char* seg_name, const char* obj_name);
+RcppExport SEXP sharedata_clone_shared_raw(SEXP seg_nameSEXP, SEXP obj_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const char* >::type seg_name(seg_nameSEXP);
     Rcpp::traits::input_parameter< const char* >::type obj_name(obj_nameSEXP);
-    __result = Rcpp::wrap(get_shared_raw(seg_name, obj_name));
+    __result = Rcpp::wrap(clone_shared_raw(seg_name, obj_name));
     return __result;
 END_RCPP
 }
-// remove_raw
-int remove_raw(const char* seg_name);
-RcppExport SEXP sharedata_remove_raw(SEXP seg_nameSEXP) {
+// exists_shared_object
+int exists_shared_object(const char* seg_name);
+RcppExport SEXP sharedata_exists_shared_object(SEXP seg_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const char* >::type seg_name(seg_nameSEXP);
-    __result = Rcpp::wrap(remove_raw(seg_name));
+    __result = Rcpp::wrap(exists_shared_object(seg_name));
+    return __result;
+END_RCPP
+}
+// remove_shared_object
+int remove_shared_object(const char* seg_name);
+RcppExport SEXP sharedata_remove_shared_object(SEXP seg_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const char* >::type seg_name(seg_nameSEXP);
+    __result = Rcpp::wrap(remove_shared_object(seg_name));
     return __result;
 END_RCPP
 }

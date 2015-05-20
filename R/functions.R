@@ -11,7 +11,7 @@ NULL
 #' }
 clone_object <- function(name) {
   stopifnot(is.character(name))
-  raw_data <- get_shared_raw(name, "raw")
+  raw_data <- clone_shared_raw(name, "raw")
   conn <- rawConnection(raw_data, "r")
   obj <- unserialize(conn)
   close(conn)
@@ -27,13 +27,10 @@ clone_object <- function(name) {
 clone_objects <- function(..., envir = parent.frame()) {
   args <- vapply(list(...), identity, character(1L))
   arg_names <- names(args)
-  if (is.null(arg_names)) arg_names <- unname(args)
   empty_names_selector <- !nzchar(arg_names)
   arg_names[empty_names_selector] <- args[empty_names_selector]
-  .mapply(function(var, name) {
-    assign(var, clone_object(name), envir = envir)
-  }, list(arg_names, args), NULL)
-  invisible(envir)
+  names(args) <- arg_names
+  invisible(list2env(lapply(args, clone_object), envir = envir))
 }
 
 #' Clone objects in a shared environment
@@ -95,19 +92,32 @@ share_objects <- function(...) {
 #' existing memory with the same name.
 #' @export
 share_environment <- function(name, envir = parent.frame(),
-  all.names = FALSE, overwrite = TRUE) {
+  all.names = TRUE, overwrite = TRUE) {
   share_object(as.list.environment(envir, all.names = all.names), name, overwrite)
 }
 
-#' Remove object from shared memory
-#' @param name character. The name of the object.
+#' Remove objects from shared memory
+#' @param ... The names of the object.
 #' @export
 #' @examples
 #' \dontrun{
-#' remove_object("shared_data")
+#' unshare("shared_data")
 #' }
-remove_object <- function(name) {
+unshare <- function(...) {
+  name <- c(list(...), recursive = TRUE)
   stopifnot(is.character(name))
-  vapply(name, remove_raw, integer(1L))
-  invisible()
+  invisible(vapply(name, remove_shared_object, integer(1L), USE.NAMES = FALSE) == 0L)
+}
+
+#' Do objects exist in shared memory?
+#' @param ... The names of the objects.
+#' @export
+#' @examples
+#' \dontrun{
+#' sharing("obj1")
+#' }
+sharing <- function(...) {
+  name <- c(list(...), recursive = TRUE)
+  stopifnot(is.character(name))
+  vapply(name, exists_shared_object, integer(1L), USE.NAMES = FALSE) == 0L
 }

@@ -13,6 +13,12 @@ test_that("share", {
   })
 })
 
+test_that("sharing", {
+  expect_equal(sharing("data1"), TRUE)
+  expect_equal(sharing(c("data2", "data3")), c(TRUE, TRUE))
+  expect_equal(sharing(c("data4", "data5", "data-not-exists")), c(TRUE, TRUE, FALSE))
+})
+
 test_that("clone", {
   expect_identical(clone_object("data1"), 1:10)
   expect_identical(clone_object("data2"), letters)
@@ -33,9 +39,9 @@ test_that("clone", {
   }), list(letters, mtcars))
 })
 
-test_that("remove", {
-  remove_object("data1")
-  remove_object("data2")
-  remove_object("data3")
-  remove_object(c("data4", "data5", "env1", "env2"))
+test_that("unshare", {
+  unshare("data1")
+  unshare("data2")
+  unshare("data3")
+  unshare(c("data4", "data5", "env1", "env2"))
 })

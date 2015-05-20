@@ -4,7 +4,7 @@
 \alias{share_environment}
 \title{Share the objects of an environment to shared memory}
 \usage{
-share_environment(name, envir = parent.frame(), all.names = FALSE,
+share_environment(name, envir = parent.frame(), all.names = TRUE,
   overwrite = TRUE)
 }
 \arguments{
