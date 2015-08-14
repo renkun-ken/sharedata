@@ -54,13 +54,17 @@ clone_environment <- function(name, envir = parent.frame()) {
 #' share_object(rnorm(1000), "shared_rnd_numbers")
 #' }
 share_object <- function(x, name, overwrite = TRUE) {
-  stopifnot(is.character(name), is.logical(overwrite))
+  stopifnot(is.character(name),
+    is.logical(overwrite),
+    length(overwrite) == 1L)
   conn <- rawConnection(raw(0L), "w")
-  serialize(x, conn)
-  seek(conn, 0L)
-  share_raw(rawConnectionValue(conn), name, "raw", overwrite)
-  close(conn)
-  invisible()
+  res <- tryCatch({
+    serialize(x, conn)
+    seek(conn, 0L)
+    share_raw(rawConnectionValue(conn), name, "raw", overwrite)
+  }, error = identity, finally = close(conn))
+  if (inherits(res, "error")) stop(res$message)
+  invisible(x)
 }
 
 #' Share objects to shared memory
@@ -78,8 +82,7 @@ share_objects <- function(...) {
       if (is.symbol(arg)) as.character(arg)
       else stop("Unnamed argument must be a symbol rather than an expression", call. = FALSE)
     }, character(1L))
-  res <- .mapply(share_object, list(objs, arg_names), NULL)
-  invisible()
+  invisible(.mapply(share_object, list(objs, arg_names), NULL))
 }
 
 #' Share the objects of an environment to shared memory
