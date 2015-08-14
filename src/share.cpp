@@ -4,7 +4,7 @@
 
 using namespace Rcpp;
 
-size_t EXTRA_BUFFER_SIZE = 1024;
+const size_t EXTRA_BUFFER_SIZE = 1024;
 
 template <typename T>
 int share_vector(const std::vector<T>& vec, const char* seg_name, const char* obj_name,

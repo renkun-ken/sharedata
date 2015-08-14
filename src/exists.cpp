@@ -5,12 +5,12 @@
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-int exists_shared_object(const char* seg_name) {
+bool exists_shared_object(const char* seg_name) {
   using namespace boost::interprocess;
   try {
     managed_shared_memory segment(open_only, seg_name);
   } catch(...) {
-    return -1;
+    return false;
   }
-  return 0;
+  return true;
 }

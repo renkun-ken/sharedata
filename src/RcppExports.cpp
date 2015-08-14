@@ -18,7 +18,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // exists_shared_object
-int exists_shared_object(const char* seg_name);
+bool exists_shared_object(const char* seg_name);
 RcppExport SEXP sharedata_exists_shared_object(SEXP seg_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -29,7 +29,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // remove_shared_object
-int remove_shared_object(const char* seg_name);
+bool remove_shared_object(const char* seg_name);
 RcppExport SEXP sharedata_remove_shared_object(SEXP seg_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;

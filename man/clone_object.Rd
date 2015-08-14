@@ -4,10 +4,14 @@
 \alias{clone_object}
 \title{Clone an object from shared memory}
 \usage{
-clone_object(name)
+clone_object(name, default)
 }
 \arguments{
 \item{name}{character. The name of the object.}
+
+\item{default}{If the shared-object does not exist, this object
+will be returned. Missing to suppress this behavior, and a stop
+will occur instead.}
 }
 \description{
 Clone an object from shared memory

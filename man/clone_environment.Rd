@@ -4,13 +4,15 @@
 \alias{clone_environment}
 \title{Clone objects in a shared environment}
 \usage{
-clone_environment(name, envir = parent.frame())
+clone_environment(name, envir = parent.frame(), ...)
 }
 \arguments{
 \item{name}{character. name of the shared environment.}
 
 \item{envir}{an environment to which the objects in the
 shared environment are exported.}
+
+\item{...}{additional parameters passed to \code{clone_object}.}
 }
 \description{
 Clone objects in a shared environment

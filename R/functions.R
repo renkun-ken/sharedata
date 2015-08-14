@@ -4,13 +4,18 @@ NULL
 
 #' Clone an object from shared memory
 #' @param name character. The name of the object.
+#' @param default If the shared-object does not exist, this object
+#' will be returned. Missing to suppress this behavior, and a stop
+#' will occur instead.
 #' @export
 #' @examples
 #' \dontrun{
 #' clone_object("shared_numbers")
 #' }
-clone_object <- function(name) {
+clone_object <- function(name, default) {
   stopifnot(is.character(name))
+  if (!missing(default) && !exists_shared_object(name))
+    return(default)
   raw_data <- clone_shared_raw(name, "raw")
   conn <- rawConnection(raw_data, "r")
   obj <- unserialize(conn)
@@ -37,9 +42,10 @@ clone_objects <- function(..., envir = parent.frame()) {
 #' @param name character. name of the shared environment.
 #' @param envir an environment to which the objects in the
 #' shared environment are exported.
+#' @param ... additional parameters passed to \code{clone_object}.
 #' @export
-clone_environment <- function(name, envir = parent.frame()) {
-  invisible(list2env(clone_object(name), envir))
+clone_environment <- function(name, envir = parent.frame(), ...) {
+  invisible(list2env(clone_object(name, ...), envir))
 }
 
 #' Share an object to shared memory
@@ -109,7 +115,7 @@ share_environment <- function(name, envir = parent.frame(),
 unshare <- function(...) {
   name <- c(list(...), recursive = TRUE)
   stopifnot(is.character(name))
-  invisible(vapply(name, remove_shared_object, integer(1L), USE.NAMES = FALSE) == 0L)
+  invisible(vapply(name, remove_shared_object, logical(1L), USE.NAMES = FALSE))
 }
 
 #' Do objects exist in shared memory?
@@ -122,5 +128,5 @@ unshare <- function(...) {
 sharing <- function(...) {
   name <- c(list(...), recursive = TRUE)
   stopifnot(is.character(name))
-  vapply(name, exists_shared_object, integer(1L), USE.NAMES = FALSE) == 0L
+  vapply(name, exists_shared_object, logical(1L), USE.NAMES = FALSE)
 }

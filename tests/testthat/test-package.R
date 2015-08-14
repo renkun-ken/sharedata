@@ -21,8 +21,12 @@ test_that("sharing", {
 
 test_that("clone", {
   expect_identical(clone_object("data1"), 1:10)
+  expect_identical(clone_object("data1", NULL), 1:10)
   expect_identical(clone_object("data2"), letters)
   expect_identical(clone_object("data3"), mtcars)
+  expect_error(clone_object("non_existing_data"))
+  expect_identical(clone_object("non_existing_data", NULL), NULL)
+  expect_identical(clone_object("non_existing_data", 1:10), 1:10)
   expect_identical({
     e <- new.env()
     clone_objects(p = "data4", q = "data5", envir = e)
