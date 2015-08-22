@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>sharedata by renkun-ken</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">sharedata</h1>
+      <h2 class="project-tagline">Interprocess data sharing between R sessions</h2>
+      <a href="https://github.com/renkun-ken/sharedata" class="btn">View on GitHub</a>
+      <a href="https://github.com/renkun-ken/sharedata/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/renkun-ken/sharedata/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="sharedata" class="anchor" href="#sharedata" aria-hidden="true"><span class="octicon octicon-link"></span></a>sharedata</h1>
+
+<p><a href="https://travis-ci.org/renkun-ken/sharedata"><img src="https://travis-ci.org/renkun-ken/sharedata.png?branch=master" alt="Linux Build Status"></a> 
+<a href="https://ci.appveyor.com/project/renkun-ken/sharedata"><img src="https://ci.appveyor.com/api/projects/status/github/renkun-ken/sharedata?svg=true" alt="Windows Build status"></a> 
+<a href="https://coveralls.io/r/renkun-ken/sharedata"><img src="https://coveralls.io/repos/renkun-ken/sharedata/badge.svg" alt="Coverage Status"></a> 
+<a href="http://cran.rstudio.com/web/packages/sharedata"><img src="http://www.r-pkg.org/badges/version/sharedata" alt="CRAN Version"></a></p>
+
+<p>A simple toolbox to share data between R sessions without having to explicitly save data to a physical location. Any serializable R object can be shared to a system-wide memory pool from which other R sessions can make copies of the object.</p>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<p>Currently, the package is only available on GitHub.</p>
+
+<div class="highlight highlight-r"><pre><span class="pl-c"># install.packages("devtools")</span>
+<span class="pl-e">devtools</span><span class="pl-k">::</span>install_github(<span class="pl-s"><span class="pl-pds">"</span>renkun-ken/sharedata<span class="pl-pds">"</span></span>)</pre></div>
+
+<h2>
+<a id="use-cases" class="anchor" href="#use-cases" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use cases</h2>
+
+<h3>
+<a id="shared-memory-data-serverclient" class="anchor" href="#shared-memory-data-serverclient" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shared-memory data server/client</h3>
+
+<p>If you are working on data that is time-consuming to produce or read, and your working environment is unstable, easy to crash, exposed to risks of corrupting the data, or simply you needs multiple sessions working on the same source of data, you may start a clean R session, load the data, and use <code>sharedata</code> to share the data to system-wide shared memory. Each client R session then clone the data from the shared memory and separately working on the data without worrying about corrupting it.</p>
+
+<p>Data server</p>
+
+<div class="highlight highlight-r"><pre>library(<span class="pl-smi">sharedata</span>)
+<span class="pl-c"># read data from a source (RDS, Database, etc.)</span>
+<span class="pl-c"># data can be any R data object</span>
+<span class="pl-smi">data</span> <span class="pl-k">&lt;-</span> readRDS(<span class="pl-s"><span class="pl-pds">"</span>data.rds<span class="pl-pds">"</span></span>)
+share_object(<span class="pl-smi">data</span>, <span class="pl-s"><span class="pl-pds">"</span>shared_data1<span class="pl-pds">"</span></span>)</pre></div>
+
+<p>Client side</p>
+
+<div class="highlight highlight-r"><pre>library(<span class="pl-smi">sharedata</span>)
+<span class="pl-smi">x</span> <span class="pl-k">&lt;-</span> clone_object(<span class="pl-s"><span class="pl-pds">"</span>shared_data1<span class="pl-pds">"</span></span>)</pre></div>
+
+<h3>
+<a id="shared-memory-servercontroller" class="anchor" href="#shared-memory-servercontroller" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shared-memory server/controller</h3>
+
+<p>If you need a script run in a loop, but still want to control the loop by passing in some information or signals. You may use <code>sharedata</code> to work as a intermediate controller. The server-side running loop reads from shared memory in each iteration, and the client-side works as a controller to pass data or signals to the loop, to make it pause, continue, or change behavior.</p>
+
+<p>Server side</p>
+
+<div class="highlight highlight-r"><pre>library(<span class="pl-smi">sharedata</span>)
+<span class="pl-smi">control</span> <span class="pl-k">&lt;-</span> <span class="pl-s"><span class="pl-pds">"</span>ready<span class="pl-pds">"</span></span>
+<span class="pl-k">while</span>(<span class="pl-c1">TRUE</span>) {
+  <span class="pl-smi">control</span> <span class="pl-k">&lt;-</span> clone_object(<span class="pl-s"><span class="pl-pds">"</span>server_state<span class="pl-pds">"</span></span>, <span class="pl-v">default</span> <span class="pl-k">=</span> <span class="pl-smi">control</span>)
+  <span class="pl-k">switch</span>(<span class="pl-smi">control</span>, 
+    <span class="pl-v">ready</span> <span class="pl-k">=</span> cat(<span class="pl-s"><span class="pl-pds">"</span>The system is running<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>),
+    <span class="pl-v">paused</span> <span class="pl-k">=</span> cat(<span class="pl-s"><span class="pl-pds">"</span>The system is paused<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>),
+    cat(<span class="pl-s"><span class="pl-pds">"</span>Invalid system state<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>)
+  )
+  Sys.sleep(<span class="pl-c1">1</span>)
+}</pre></div>
+
+<p>Controller side</p>
+
+<div class="highlight highlight-r"><pre>library(<span class="pl-smi">sharedata</span>)
+<span class="pl-k">while</span>(<span class="pl-c1">TRUE</span>) {
+  <span class="pl-smi">control</span> <span class="pl-k">&lt;-</span> readline()
+  share_object(<span class="pl-smi">control</span>, <span class="pl-s"><span class="pl-pds">"</span>server_state<span class="pl-pds">"</span></span>)
+}</pre></div>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>This package is under <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/renkun-ken/sharedata">sharedata</a> is maintained by <a href="https://github.com/renkun-ken">renkun-ken</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
