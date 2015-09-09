@@ -2,7 +2,7 @@
 
 [![Linux Build Status](https://travis-ci.org/renkun-ken/sharedata.png?branch=master)](https://travis-ci.org/renkun-ken/sharedata) 
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/github/renkun-ken/sharedata?svg=true)](https://ci.appveyor.com/project/renkun-ken/sharedata) 
-[![Coverage Status](https://coveralls.io/repos/renkun-ken/sharedata/badge.svg)](https://coveralls.io/r/renkun-ken/sharedata) 
+[![codecov.io](http://codecov.io/github/renkun-ken/sharedata/coverage.svg?branch=master)](http://codecov.io/github/renkun-ken/sharedata?branch=master)
 [![CRAN Version](http://www.r-pkg.org/badges/version/sharedata)](http://cran.rstudio.com/web/packages/sharedata)
 
 
