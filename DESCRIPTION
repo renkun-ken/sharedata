@@ -17,3 +17,4 @@ BugReports: https://github.com/renkun-ken/sharedata/issues
 Roxygen: list(wrap = FALSE)
 ByteCompile: TRUE
 Suggests: testthat
+RoxygenNote: 6.1.1
